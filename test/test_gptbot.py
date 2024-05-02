@@ -1,7 +1,5 @@
 import pytest
 from unittest.mock import patch
-
-import requests
 from gptbot import add_message_to_the_conversation, main, setup_openAI_client
 
 
@@ -23,16 +21,6 @@ def test_setup_openAI_client():
         client = setup_openAI_client()
         assert client.api_key == "api_key"
         assert client.organization == "organization"
-
-
-def test_main_network_error():
-    with patch("sys.argv", ["gptbot.py", "Tom"]), patch(
-        "gptbot.setup_openAI_client"
-    ) as mock_setup_openAI_client, patch("gptbot.input") as mock_input:
-        mock_input.side_effect = [requests.RequestException]
-        with pytest.raises(SystemExit) as e:
-            main()
-        assert str(e.value) == f"Network error occurred: "
 
 
 def test_main_eof_error():

@@ -1,6 +1,6 @@
 import sys
 import os
-import requests
+import openai
 from openai import OpenAI
 from dotenv import load_dotenv
 
@@ -45,15 +45,16 @@ def main():
                 sys.exit("The conversation is too long, please start a new one.")
 
             ai_output = response.choices[0].message.content
-            total_tokens += response.usage.total_tokens
 
             add_message_to_the_conversation(list_of_messages, "assistant", ai_output)
 
             print("AI:", ai_output)
+
+            total_tokens += response.usage.total_tokens
             continue
-        except requests.RequestException as e:
+        except (openai.APIConnectionError) as e:
             sys.exit(f"Network error occurred: {e}")
-        except EOFError:
+        except (EOFError, KeyboardInterrupt):
             sys.exit(f"\nBye!\nTotal amount of tokens used: {total_tokens}")
 
 
